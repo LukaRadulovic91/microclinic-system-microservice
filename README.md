@@ -1,3 +1,5 @@
+___*This repository serves as an example of a real-world project I worked on. It is intended solely to demonstrate the scope and structure of the work I contributed to. Sensitive data has been redacted and cannot be misused.*___
+
 # Microclinic Microservices
 
 ## Overview
