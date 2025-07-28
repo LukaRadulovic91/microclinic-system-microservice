@@ -2,13 +2,17 @@
 
 namespace App\Services;
 
-use App\DTOs\AppointmentData;
+use Illuminate\Contracts\Events\Dispatcher;
 use App\Models\Appointment;
 use App\Repositories\AppointmentRepository;
+use App\Events\AppointmentCreated;
 
 class AppointmentService
 {
-    public function __construct(private AppointmentRepository $appointmentRepository)
+    public function __construct(
+        protected AppointmentRepository $repository,
+        protected Dispatcher $dispatcher
+    )
     {
     }
 
@@ -16,9 +20,9 @@ class AppointmentService
      * Schedule a new appointment.
      *
      * @param array $data
-     * @return AppointmentData
+     * @return Appointment
      */
-    public function schedule(array $data): AppointmentData
+    public function schedule(array $data): Appointment
     {
         $appointment = new Appointment(
             id: new AppointmentId(0),
@@ -27,7 +31,11 @@ class AppointmentService
             notes: $data->notes
         );
 
-        return $this->repository->save($appointment);
+        $saved = $this->repository->save($appointment);
+
+        $this->dispatcher->dispatch(new AppointmentCreated($saved));
+
+        return $saved;
     }
 
     /**
