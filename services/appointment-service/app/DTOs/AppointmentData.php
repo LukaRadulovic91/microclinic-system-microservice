@@ -6,9 +6,9 @@ class AppointmentData
 {
     public function __construct(
         public int $id,
-        public int $user_id,
-        public string $scheduled_for,
-        public ?string $notes = null,
+        public readonly int $user_id,
+        public readonly string $scheduled_for,
+        public readonly ?string $notes = null,
     ) {
     }
 

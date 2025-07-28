@@ -20,8 +20,30 @@ class AppointmentService
      */
     public function schedule(array $data): AppointmentData
     {
-        $appointment = $this->appointmentRepository->create($data);
+        $appointment = new Appointment(
+            id: new AppointmentId(0),
+            userId: new UserId($data->user_id),
+            scheduledFor: new ScheduledDate($data->scheduled_for),
+            notes: $data->notes
+        );
 
-        return new AppointmentData($appointment->toArray());
+        return $this->repository->save($appointment);
+    }
+
+    /**
+     * Reschedule an appointment.
+     *
+     * @param int $id
+     * @param string $newDate
+     *
+     * @return Appointment
+     */
+    public function reschedule(int $id, string $newDate): Appointment
+    {
+        $appointment = $this->repository->findById(new AppointmentId($id));
+
+        $appointment->reschedule(new ScheduledDate($newDate));
+
+        return $this->repository->save($appointment);
     }
 }
