@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use Illuminate\Http\JsonResponse;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\V1\ScheduleAppointmentRequest;
 use App\Services\AppointmentService;
-use Illuminate\Http\JsonResponse;
+use App\DTOs\AppointmentData;
 
 class AppointmentController extends Controller
 {
@@ -24,4 +25,18 @@ class AppointmentController extends Controller
             'data' => $appointment,
         ], 201);
     }
+
+    public function store(ScheduleAppointmentRequest $request)
+    {
+        $data = new AppointmentData(
+            user_id: $request->user()->id,
+            scheduled_for: $request->input('scheduled_for'),
+            notes: $request->input('notes')
+        );
+
+        $appointment = $this->appointmentService->schedule($data);
+
+        return response()->json($appointment->toArray(), 201);
+    }
+
 }
